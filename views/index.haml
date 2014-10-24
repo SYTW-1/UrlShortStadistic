@@ -1,0 +1,23 @@
+.panel.panel-primary
+    .panel-heading
+        %h1 Últimas URL's agregadas por todos los usuarios.
+    .panel-body
+        %table.table
+            %tr
+                %th
+                    URL completa
+                %th
+                    URL corta
+                %th
+                    Email creador
+            - @list.each do |url|
+                %tr
+                    %td
+                        #{url.url}
+                    %td
+                        %a{:href=>"/#{url.urlshort}"} #{url.urlshort}
+                    %td
+                        - if url.email != nil
+                            #{url.email}
+                        - else
+                            Pública

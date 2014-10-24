@@ -1,0 +1,88 @@
+!!!
+%html
+    %head
+        %title Acortador de URLs
+        %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
+        %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
+        %link{:type => "text/css", :rel => "stylesheet", :href => "http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic"}
+        %link{:type => "text/css", :rel => "stylesheet", :href => "http://fonts.googleapis.com/css?family=Montserrat:400,700"}
+        %link{:type => "text/css", :rel => "stylesheet", :href=>"https://raw.githubusercontent.com/IronSummitMedia/startbootstrap/gh-pages/templates/freelancer/css/freelancer.css"}
+        %link{:type => "text/css", :rel => "stylesheet", :href=>"//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"}
+    %body#page-top.index
+        / Navigation
+        %nav.navbar.navbar-default.navbar-fixed-top.navbar-inverse
+            .container
+                / Brand and toggle get grouped for better mobile display
+                .navbar-header.page-scroll
+                    %button.navbar-toggle{"data-target" => "#bs-example-navbar-collapse-1", "data-toggle" => "collapse", :type => "button"}
+                        %span.sr-only Toggle navigation
+                        %span.icon-bar
+                        %span.icon-bar
+                        %span.icon-bar
+                    %a.navbar-brand{:href => "#page-top"} URL's Shortened
+                / Collect the nav links, forms, and other content for toggling
+                #bs-example-navbar-collapse-1.collapse.navbar-collapse
+                    %ul.nav.navbar-nav.navbar-right
+                        %li.hidden
+                            %a{:href => "#page-top"}
+                        - if !session[:uid]
+                            %li.page-scroll
+                                %a{:href => "/auth/github"}
+                                    %button.btn.btn-success
+                                        %i.fa.fa-github
+                                        Sign In with Github
+                            %li.page-scroll
+                                %a{:href => "/auth/google_oauth2"}
+                                    %button.btn.btn-success
+                                        %i.fa.fa-google
+                                        Sign In with Google
+                            %li.page-scroll
+                                %a{:href => "/auth/facebook"}
+                                    %button.btn.btn-success
+                                        %i.fa.fa-facebook
+                                        Sign In with Facebook
+                        - else
+                            %li.page-scroll
+                                %a{:href => "/logout"}
+                                    %button.btn.btn-danger
+                                        - if session[:plt] == 'github'
+                                            %i.fa.fa-github
+                                            Log Out
+                                        - elsif session[:plt] == 'google'
+                                            %i.fa.fa-google
+                                            Log Out
+                                        - elsif session[:plt] == 'facebook'
+                                            %i.fa.fa-facebook
+                                            Log Out
+        %section
+            .container
+                .page-header
+                    .jumbotron
+                        %h1 Acortador de URL's
+                        %h2 Guarda tus URL's con tu cuenta de Google, Facebook o Github
+                =yield
+                .panel.panel-primary
+                    - if !session[:uid]
+                        .panel-heading
+                            %h1 Crea nuevas URLs aunque no hayas iniciado sesión
+                    - else
+                        .panel-heading
+                            %h1 Crea nuevas URLs con tu usuario de #{session[:plt]}
+                    .panel-body
+                        %form(action="/" method="POST")
+                            .input-group
+                                %span.input-group-addon URL
+                                %input.form-control(type="text" name="url" id="myurl" autofocus size=100 accesskey="s" placeholder="Large URL")
+                            %br
+                            .input-group
+                                %span.input-group-addon URL
+                                %input.form-control(type="text" name="urlshort" id="myurlshort" autofocus size=100 accesskey="s" placeholder="Shortened URL")
+                            %br
+                            %input.btn.btn-success(type="submit" value="Shorten")
+        %br
+        %br
+        %nav.navbar-fixed-bottom.navbar-inverse
+            .container
+                %p.navbar-text Eliezer Cruz Suárez (alu0100611298)
+                %p.navbar-text Néstor Álvarez Díaz (alu0100597943)
+        %script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
