@@ -10,6 +10,7 @@ require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
 require 'omniauth-github'
 require 'omniauth-facebook'
+%w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
 
 use OmniAuth::Builder do
   config = YAML.load_file 'config/config.yml'
@@ -52,12 +53,20 @@ end
 get '/' do
   if !session[:uid]
     puts "inside get '/': #{params}"
-    @list = ShortenedUrl.all(:order => [ :id.desc ], :limit => 20)
-    # in SQL => SELECT * FROM "ShortenedUrl" ORDER BY "id" ASC
+    @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
+    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
     haml :index
   else
     redirect '/session'
   end
+end
+
+get '/visitado' do
+    puts "inside get '/': #{params}"
+    @list = Shortenedurl.visits.all()
+    puts @list
+    puts "-------------------------------------------"
+    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
 end
 
 get '/auth/:name/callback' do
@@ -71,12 +80,12 @@ get '/auth/:name/callback' do
     session[:name] = @auth['info'].nickname
     session[:email] = @auth['info'].email
   end
-  @list = ShortenedUrl.all(:uid => session[:uid])
+  @list = Shortenedurl.all(:uid => session[:uid])
   haml :user
 end
 
 get '/session' do
-  @list = ShortenedUrl.all(:uid => session[:uid])
+  @list = Shortenedurl.all(:uid => session[:uid])
   haml :user
 end
 get '/logout' do
@@ -86,7 +95,7 @@ get '/logout' do
 end
 
 #get '/delete' do
-#  ShortenedUrl.all.destroy
+#  Shortenedurl.all.destroy
 #  redirect '/'
 #end
 
@@ -95,8 +104,8 @@ post '/' do
   uri = URI::parse(params[:url])
   if uri.is_a? URI::HTTP or uri.is_a? URI::HTTPS then
     begin
-      sh = (params[:urlshort] != '') ? params[:urlshort] : (ShortenedUrl.count+1)
-      @short_url = ShortenedUrl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh)
+      sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
+      @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
     rescue Exception => e
       puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
       pp @short_url
@@ -114,7 +123,9 @@ end
 
 get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
-  short_url = ShortenedUrl.first(:urlshort => params[:shortened])
+  short_url = Shortenedurl.first(:urlshort => params[:shortened])
+  short_url.visits << Visit.create(:ip => get_remote_ip(env))
+  short_url.save
 
   # HTTP status codes that start with 3 (such as 301, 302) tell the
   # browser to go look for that resource in another location. This is
@@ -125,3 +136,28 @@ get '/:shortened' do
 end
 
 error do haml :index end
+
+def get_remote_ip(env)
+  puts "request.url = #{request.url}"
+  puts "request.ip = #{request.ip}"
+  if addr = env['HTTP_X_FORWARDED_FOR']
+    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+    addr.split(',').first.strip
+  else
+    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+    env['REMOTE_ADDR']
+  end
+end
+
+['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
+  get path do
+    @link = Shortenedurl.first(:urlshort => params[:short_url])
+    @visit = Visit.all()
+    @num_of_days = (params[:num_of_days] || 15).to_i
+    @count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
+    chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
+    @count_country_map = chart[:map]
+    @count_country_bar = chart[:bar]
+    haml :info
+  end
+end
