@@ -13,6 +13,9 @@ gem 'pry'
 gem 'erubis'
 gem 'chartkick'
 
+gem 'rest-client'
+gem 'xml-simple'
+
 group :production do
 	gem 'haml'
     gem "pg"
