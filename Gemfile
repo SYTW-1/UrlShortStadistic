@@ -12,6 +12,9 @@ gem 'omniauth-facebook'
 gem 'pry' 
 gem 'erubis'
 
+gem 'rest-client'
+gem 'xml-simple'
+
 group :production do
 	gem 'haml'
     gem "pg"
