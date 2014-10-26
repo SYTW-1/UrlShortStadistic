@@ -27,7 +27,6 @@ class Visit
 
   belongs_to  :shortenedurl
   
-  after :create
   
   def self.count_days_bar(identifier,num_of_days)
     visits = count_by_date_with(identifier,num_of_days)
