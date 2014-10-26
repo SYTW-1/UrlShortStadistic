@@ -157,7 +157,8 @@ def get_ip
 end
 
 def get_country(ip)
-  xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"  
+  xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"
+  xml1 = RestClient.get "http://ip-api.com/xml/#{ip}"
   XmlSimple.xml_in(xml.to_s)['featureMember'][0]['Hostip'][0]['countryName'][0]
 end
 
@@ -165,6 +166,12 @@ end
   get path do
     @link = Shortenedurl.first(:urlshort => params[:short_url])
     @visit = Visit.all()
+      #@visit.each do |v|
+      #  puts  v.id
+      #  puts  v.created_at
+      #  puts  v.ip
+      #  puts  v.country
+      #end
     @num_of_days = (params[:num_of_days] || 15).to_i
     @count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
     chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
