@@ -1,32 +1,78 @@
-%h1.title Information
-.span-3 Original
-.span-21.last= @link.url
-.span-3 Shortened
-.span-21.last
-  %a{:href => "/#{@link.urlshort}"}
-    = "http://localhost:9393/#{@link.urlshort}"
-.span-3 Date created
-.span-21.last= @link.created_at
-.span-3 Number of visits
-.span-21.last= "#{@link.n_visits} visits"
-    
-%h2= "Number of visits in the past #{@num_of_days} days"
-- %w(7 14 21 30).each do |num_days|
-  %a{:href => "/info/#{@link.urlshort}/#{num_days}"}
-    ="#{num_days} days "
-  |
-%p
-.span-24.last
-  %img{:src => @count_days_bar}
-
-%h2 Number of visits by country
-- %w(world usa asia europe africa middle_east south_america).each do |loc|
-  %a{:href => "/info/#{@link.urlshort}/#{@num_of_days.to_s}/#{loc}"}
-    =loc
-  |
-%p
-.span-12
-  %img{:src => @count_country_map}
-.span-12.last
-  %img{:src => @count_country_bar}
-%p
+/%h1.title Information
+/.span-3 Original
+/.span-21.last= @link.url
+/.span-3 Shortened
+/.span-21.last
+/  %a{:href => "/#{@link.urlshort}"}
+/    = "http://localhost:9393/#{@link.urlshort}"
+/.span-3 Date created
+/.span-21.last= @link.created_at
+/.span-3 Number of visits
+/.span-21.last= "#{@link.n_visits} visits"
+/    
+/%h2= "Number of visits in the past #{@num_of_days} days"
+/- %w(7 14 21 30).each do |num_days|
+/  %a{:href => "/info/#{@link.urlshort}/#{num_days}"}
+/    ="#{num_days} days "
+/  |
+/%p
+/.span-24.last
+/  %img{:src => @count_days_bar}
+/
+/%h2 Number of visits by country
+/- %w(world usa asia europe africa middle_east south_america).each do |loc|
+/  %a{:href => "/info/#{@link.urlshort}/#{@num_of_days.to_s}/#{loc}"}
+/    =loc
+/  |
+/%p
+/.span-12
+/  %img{:src => @count_country_map}
+/.span-12.last
+/  %img{:src => @count_country_bar}
+/%p
+.row
+    .col-md-6
+        .panel.panel-primary
+            .panel-heading
+                %h1 Información
+            .panel-body
+                %ul.list-group
+                    %li.list-group-item
+                        %p
+                            %strong URL Original
+                        %p #{@link.url}
+                    %li.list-group-item
+                        %p
+                            %strong URL Corta
+                        %a{:href => "/#{@link.urlshort}", :title => "Visitar"}
+                            %span #{@link.urlshort}
+                            %i.fa.fa-external-link
+                    %li.list-group-item
+                        %p
+                            %strong Fecha de Creación
+                        %p #{@link.created_at}
+    .col-md-6
+        .panel.panel-primary
+            .panel-heading
+                %h1 Visitas
+            .panel-body
+                %ul.list-group
+                    %li.list-group-item
+                        %p
+                            %strong Visitas Totales
+                            %span.badge.pull-right #{@link.n_visits}
+                    - @country.each do |item|
+                        %li.list-group-item
+                            %p
+                                %strong Visitas desde #{item[0]}
+                                %span.badge.pull-right #{item[1]}
+.row
+    .col-md-12
+        .panel.panel-primary
+            .panel-heading
+                %h1 Gráficas
+            .panel-body
+                %h2 País de visita
+                = column_chart(@country)
+                %h2 Visitas por días
+                = column_chart(@days)

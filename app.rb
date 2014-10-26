@@ -11,6 +11,7 @@ require 'omniauth-google-oauth2'
 require 'omniauth-github'
 require 'omniauth-facebook'
 require 'chartkick'
+require 'groupdate'
 %w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
 
 use OmniAuth::Builder do
@@ -170,11 +171,19 @@ end
   get path do
     @link = Shortenedurl.first(:urlshort => params[:short_url])
     @visit = Visit.all()
-    @num_of_days = (params[:num_of_days] || 15).to_i
-    @count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
-    chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
-    @count_country_map = chart[:map]
-    @count_country_bar = chart[:bar]
-    haml :info
+    @country = Hash.new
+    @visit.count_by_country_with(params[:short_url]).to_a.each do |item|
+      @country[item.country] = item.count
+    end
+    @days = Hash.new
+    @visit.as_date(params[:short_url]).each do |item|
+      @days[item.date] = item.count
+    end
+    #@num_of_days = (params[:num_of_days] || 15).to_i
+    #@count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
+    #chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
+    #@count_country_map = chart[:map]
+    #@count_country_bar = chart[:bar]
+    haml :info, :layout => :admin
   end
 end
