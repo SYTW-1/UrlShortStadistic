@@ -2,6 +2,7 @@ require 'dm-core'
 require 'dm-migrations'
 require 'restclient'
 require 'xmlsimple'
+require 'dm-timestamps'
 
 class Shortenedurl
   include DataMapper::Resource
@@ -44,8 +45,12 @@ class Visit
     return chart
   end
   
+  def self.as_date(identifier)
+    repository(:default).adapter.query("SELECT date(created_at) AS date, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY date(created_at)")
+  end
+
   def self.count_by_date_with(identifier,num_of_days)
-    visits = repository(:default).adapter.select("SELECT date(created_at) as date, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' and created_at between CURRENT_DATE-#{num_of_days} and CURRENT_DATE+1 group by date(created_at)")
+    visits = repository(:default).adapter.query("SELECT date(created_at) as date, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' and date(created_at) between CURRENT_DATE-#{num_of_days} and CURRENT_DATE+1 group by date(created_at)")
     dates = (Date.today-num_of_days..Date.today)
     results = {}
     dates.each { |date|
@@ -56,6 +61,6 @@ class Visit
   end
   
   def self.count_by_country_with(identifier)
-    a = repository(:default).adapter.select("SELECT country, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' group by country")    
+    repository(:default).adapter.query("SELECT country, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' group by country")
   end
 end

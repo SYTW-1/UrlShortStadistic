@@ -11,6 +11,8 @@ gem 'omniauth-github'
 gem 'omniauth-facebook'
 gem 'pry' 
 gem 'erubis'
+gem 'chartkick'
+gem 'groupdate'
 
 gem 'rest-client'
 gem 'xml-simple'
