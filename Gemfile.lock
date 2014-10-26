@@ -72,9 +72,11 @@ GEM
     json_pure (1.8.1)
     jwt (1.0.0)
     method_source (0.8.2)
+    mime-types (2.4.3)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    netrc (0.8.0)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0)
@@ -108,6 +110,9 @@ GEM
     rack-test (0.6.2)
       rack (>= 1.0)
     rake (10.3.2)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -124,6 +129,7 @@ GEM
     stringex (1.5.1)
     tilt (1.4.1)
     uuidtools (2.1.5)
+    xml-simple (1.1.4)
 
 PLATFORMS
   ruby
@@ -143,6 +149,8 @@ DEPENDENCIES
   pry
   rack-test
   rake
+  rest-client
   sinatra
   sinatra-contrib
   sqlite3
+  xml-simple
