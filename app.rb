@@ -13,7 +13,7 @@ require 'omniauth-facebook'
 
 use OmniAuth::Builder do
   config = YAML.load_file 'config/config.yml'
-  provider :google_oauth2, config['identifier'], config['secret']
+  provider :google_oauth2, config['identifier_google'], config['secret_goole']
   provider :github, config['identifier_github'], config['secret_github']
   provider :facebook, config['identifier_facebook'], config['secret_facebook']
 end

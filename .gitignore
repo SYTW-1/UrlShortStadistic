@@ -1,2 +1,3 @@
 config/config.yml
+config/config_filled.yml
 *secret_client
