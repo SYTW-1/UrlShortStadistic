@@ -79,10 +79,15 @@ get '/session' do
   @list = ShortenedUrl.all(:uid => session[:uid])
   haml :user
 end
+
 get '/logout' do
   session.clear
   #redirect 'https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=' + to('/')
   redirect '/'
+end
+
+get '/stadistic' do
+  haml :stadistic, :layout => :admin
 end
 
 #get '/delete' do
