@@ -10,6 +10,7 @@ require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
 require 'omniauth-github'
 require 'omniauth-facebook'
+require 'chartkick'
 
 use OmniAuth::Builder do
   config = YAML.load_file 'config/config.yml'
@@ -87,9 +88,17 @@ get '/logout' do
 end
 
 get '/stadistic' do
+  get_ip()
   haml :stadistic, :layout => :admin
 end
 
+def get_ip()
+ puts "request.ip = #{request.ip}"
+end
+
+def get_info_hours()
+
+end
 #get '/delete' do
 #  ShortenedUrl.all.destroy
 #  redirect '/'
