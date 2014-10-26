@@ -27,13 +27,7 @@ class Visit
 
   belongs_to  :shortenedurl
   
-  after :create, :set_country
-  
-  def set_country
-    xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"  
-    self.country = XmlSimple.xml_in(xml.to_s, { 'ForceArray' => false })['featureMember']['Hostip']['countryAbbrev']
-    self.save
-  end
+  after :create
   
   def self.count_days_bar(identifier,num_of_days)
     visits = count_by_date_with(identifier,num_of_days)

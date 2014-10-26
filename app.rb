@@ -11,6 +11,7 @@ require 'omniauth-google-oauth2'
 require 'omniauth-github'
 require 'omniauth-facebook'
 %w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
+require 'ipaddr'
 
 use OmniAuth::Builder do
   config = YAML.load_file 'config/config.yml'
@@ -124,9 +125,11 @@ end
 get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
-  short_url.visits << Visit.create(:ip => get_remote_ip(env))
-  short_url.save
-
+  short_url.n_visits += 1
+  ip = get_ip
+  address = get_country(ip)
+  visit = Visit.new(:created_at => Time.now, :ip => ip, :country => address, :shortenedurl => short_url)
+  visit.save!
   # HTTP status codes that start with 3 (such as 301, 302) tell the
   # browser to go look for that resource in another location. This is
   # used in the case where a web page has moved to another location or
@@ -135,18 +138,27 @@ get '/:shortened' do
   redirect short_url.url, 301
 end
 
-error do haml :index end
+#error do haml :index end
 
-def get_remote_ip(env)
-  puts "request.url = #{request.url}"
-  puts "request.ip = #{request.ip}"
-  if addr = env['HTTP_X_FORWARDED_FOR']
-    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
-    addr.split(',').first.strip
-  else
-    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
-    env['REMOTE_ADDR']
-  end
+#def get_remote_ip(env)
+#  puts "request.url = #{request.url}"
+#  puts "request.ip = #{request.ip}"
+#  if addr = env['HTTP_X_FORWARDED_FOR']
+#    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+#    addr.split(',').first.strip
+#  else
+#    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+#    env['REMOTE_ADDR']
+#  end
+#end
+
+def get_ip
+  (RestClient.get "http://whatismyip.akamai.com").to_s
+end
+
+def get_country(ip)
+  xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"  
+  XmlSimple.xml_in(xml.to_s)['featureMember'][0]['Hostip'][0]['countryName'][0]
 end
 
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
