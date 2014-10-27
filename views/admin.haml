@@ -1,6 +1,7 @@
 !!!
 %html
     %head
+        %meta{:name=>"viewport", :content=>"initial-scale=1.0, user-scalable=no"}
         %title Acortador de URLs
         %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
         %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
@@ -8,8 +9,11 @@
         %link{:type => "text/css", :rel => "stylesheet", :href => "http://fonts.googleapis.com/css?family=Montserrat:400,700"}
         %link{:type => "text/css", :rel => "stylesheet", :href=>"https://raw.githubusercontent.com/IronSummitMedia/startbootstrap/gh-pages/templates/freelancer/css/freelancer.css"}
         %link{:type => "text/css", :rel => "stylesheet", :href=>"//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"}
+        %link{:type => "text/css", :rel => "stylesheet", :href=>"/style.css"}
         %script(src="//www.google.com/jsapi")
         %script(src="/chartkick.js")
+        %script(src="//maps.googleapis.com/maps/api/js?v=3.exp")
+        %script(src="/map.js")
     %body#page-top.index
         / Navigation
         %nav.navbar.navbar-default.navbar-inverse
