@@ -10,6 +10,8 @@
                     Visitas
                 %th
                     Autor
+                %th
+                    Estadísticas
             - @short_url.each do |item|
                 %tr
                     %td
@@ -21,3 +23,6 @@
                             #{item.email}
                         - else
                             %a{:href => "/stadistic/public"} Pública
+                        %td
+                            %a{:href=>"/info/#{item.urlshort}", :title => "Estadísticas individuales"}
+                                %i.fa.fa-bar-chart
