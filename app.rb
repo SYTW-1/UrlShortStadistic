@@ -170,14 +170,14 @@ end
     @visit.as_date(params[:short_url]).each do |item|
       @days[item.date] = item.count
     end
-    map
+    map(@visit)
     haml :info, :layout => :admin
   end
 end
 
-def map
+def map(visit)
   @str = ''
-  @visit.as_map(params[:short_url]).each do |item|
+  visit.as_map(params[:short_url]).each do |item|
     puts item.latitude
     if (item.latitude != nil)
       @str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
