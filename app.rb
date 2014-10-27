@@ -101,7 +101,7 @@ end
   get path do
     if params[:user] == 'public'
       @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
-    elsif params[:users] != nil
+    elsif params[:user] != nil
       @short_url = Shortenedurl.all(:email => params[:user], :order => [:n_visits.desc])
     else
       @short_url = Shortenedurl.all(:order => [:n_visits.desc])
