@@ -23,6 +23,8 @@ describe "shortened urls" do
 
 		@short_url = Shortenedurl.first_or_create(:uid => @user, :email => @email, :url => @url, :urlshort => @urlshort, :n_visits => 0)
 		@short_url1 = Shortenedurl.first(:urlshort => @urlshort)
+		@short_url.n_visits += 1
+		@short_url.save
   		@visit = Visit.new(:ip => @ip, :country => @country, :countryCode => @countryCode, :city => @city, :latitude => @latitude, :longitude => @longitude, :shortenedurl => @short_url1, :created_at => Time.now)
   		@visit.save
 	end
@@ -44,7 +46,7 @@ describe "shortened urls" do
 	end
 
 	it "El numero de visitas es 1" do
-		assert_equal 0, @short_url1.n_visits
+		assert_equal 1, @short_url1.n_visits
 	end
 
 	it "La ip es 88.10.68.232" do

@@ -129,13 +129,14 @@ post '/' do
   end
 end
 
-get '/:shortened' do
+get '/visitar/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
   short_url.n_visits += 1
+  short_url.save
   data = get_geo
   visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
-  visit.save!
+  visit.save
   redirect short_url.url, 301
 end
 
