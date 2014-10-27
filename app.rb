@@ -132,7 +132,7 @@ get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
   short_url.n_visits += 1
-  ip = get_ip
+  ip = get_remote_ip
   address = get_country(ip)
   visit = Visit.new(:created_at => Time.now, :ip => ip, :country => address, :shortenedurl => short_url)
   visit.save!
@@ -146,17 +146,17 @@ end
 
 #error do haml :index end
 
-#def get_remote_ip(env)
-#  puts "request.url = #{request.url}"
-#  puts "request.ip = #{request.ip}"
-#  if addr = env['HTTP_X_FORWARDED_FOR']
-#    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
-#    addr.split(',').first.strip
-#  else
-#    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
-#    env['REMOTE_ADDR']
-#  end
-#end
+def get_remote_ip(env)
+  puts "request.url = #{request.url}"
+  puts "request.ip = #{request.ip}"
+  if addr = env['HTTP_X_FORWARDED_FOR']
+    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+    addr.split(',').first.strip
+  else
+    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+    env['REMOTE_ADDR']
+  end
+end
 
 def get_ip
   (RestClient.get "http://whatismyip.akamai.com").to_s
