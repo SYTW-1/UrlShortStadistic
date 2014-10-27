@@ -26,7 +26,7 @@ Hay dos maneras de ejecutar la aplicacion
 
 1. Accediendo a Heroku
 
-	[Heroku](http://shortedstadistic.herokuapp.com/)
+	[shortedstadistic](http://shortedstadistic.herokuapp.com/)
 
 2. Ejecucion el local
 
