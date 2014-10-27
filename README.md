@@ -11,7 +11,7 @@ Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que adm
 
 [Heroku](http://shortedstadistic.herokuapp.com/)
 
-[gh-pages](http://sytw-1.github.io/shortened_urls)
+[gh-pages](http://sytw-1.github.io/UrlShortStadistic)
 
 # Shortened URLS
 
