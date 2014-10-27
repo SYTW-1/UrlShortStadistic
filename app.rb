@@ -15,10 +15,10 @@ require 'groupdate'
 %w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
 
 use OmniAuth::Builder do
-  config = YAML.load_file 'config/config.yml'
-  provider :google_oauth2, config['identifier_google'], config['secret_goole']
-  provider :github, config['identifier_github'], config['secret_github']
-  provider :facebook, config['identifier_facebook'], config['secret_facebook']
+  #config = YAML.load_file 'config/config.yml'
+  #provider :google_oauth2, config['identifier_google'], config['secret_goole']
+  #provider :github, config['identifier_github'], config['secret_github']
+  #provider :facebook, config['identifier_facebook'], config['secret_facebook']
 end
 
 enable :sessions
@@ -132,48 +132,17 @@ get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
   short_url.n_visits += 1
-  ip = get_ip
-  address = get_country(ip)
-  visit = Visit.new(:created_at => Time.now, :ip => ip, :country => address, :shortenedurl => short_url)
+  data = get_geo
+  visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
   visit.save!
-  # HTTP status codes that start with 3 (such as 301, 302) tell the
-  # browser to go look for that resource in another location. This is
-  # used in the case where a web page has moved to another location or
-  # is no longer at the original location. The two most commonly used
-  # redirection status codes are 301 Move Permanently and 302 Found.
   redirect short_url.url, 301
 end
 
-#error do haml :index end
 
-#def get_remote_ip(env)
-#  puts "request.url = #{request.url}"
-#  puts "request.ip = #{request.ip}"
-#  if addr = env['HTTP_X_FORWARDED_FOR']
-#    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
-#    addr.split(',').first.strip
-#  else
-#    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
-#    env['REMOTE_ADDR']
-#  end
-#end
-
-def get_ip
-  (RestClient.get "http://whatismyip.akamai.com").to_s
-end
-
-def get_country(ip)
-  xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"
-  xml1 = RestClient.get "http://ip-api.com/xml/#{ip}"
-  country = XmlSimple.xml_in(xml.to_s)['featureMember'][0]['Hostip'][0]['countryName'][0]
-  if ('(Unknown Country?)' == country)
-    xml = RestClient.get "http://ip-api.com/xml/#{ip}"
-    country = XmlSimple.xml_in(xml1.to_s)['country'][0]
-  end
-  country = country.upcase
-  puts "________________________________________"
-  puts country 
-  country
+def get_geo
+  xml = RestClient.get "http://freegeoip.net/xml/"
+  data = XmlSimple.xml_in(xml.to_s)
+  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
 end
 
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
@@ -188,11 +157,24 @@ end
     @visit.as_date(params[:short_url]).each do |item|
       @days[item.date] = item.count
     end
-    #@num_of_days = (params[:num_of_days] || 15).to_i
-    #@count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
-    #chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
-    #@count_country_map = chart[:map]
-    #@count_country_bar = chart[:bar]
+    map
     haml :info, :layout => :admin
   end
+end
+
+def map
+  @str = ''
+  @visit.as_map(params[:short_url]).each do |item|
+    puts item.latitude
+    if (item.latitude != nil)
+      @str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+              var infowindow = new google.maps.InfoWindow({
+                  map: map,
+                  position: pos,
+                  content: \" #{item.city}: #{item.count} \"
+              });
+              map.setCenter(pos);"
+    end
+  end
+  puts @str
 end
