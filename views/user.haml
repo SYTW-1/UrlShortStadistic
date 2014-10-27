@@ -16,9 +16,12 @@
                     %td
                         #{url.url}
                     %td
-                        %a{:href=>"/#{url.urlshort}"} #{url.urlshort}
+                        %a{:href=>"/visitar//#{url.urlshort}"} #{url.urlshort}
                     %td
                         - if url.email != nil
                             #{url.email}
                         - else
                             Pública
+                    %td.text-center
+                        %a{:href=>"/info/#{url.urlshort}", :title => "Estadísticas individuales"}
+                            %i.fa.fa-bar-chart
