@@ -1,11 +1,18 @@
 # Sistemas y Tecnologías Web:
 [![Build Status](https://travis-ci.org/SYTW-1/shortened_urls.svg?branch=master)](https://travis-ci.org/SYTW-1/shortened_urls)
-##Práctica: Acortador de URLs
+##Práctica: Estadísticas de Visitas al Acortador de URLs
 
 **Autor:** Eliezer Cruz Suárez: alu0100611298
 **Autor:** Nestor Alvarez Díaz: alu0100594973
 
-Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que admita además abreviaciones elegidas por el usuario.
+En esta práctica extendemos la anterior 40.9 con información estadística acerca de las visitas. Se pide que se presenten gráficos estadísticos (barras, etc.) del número de visitas por día, por país, etc.
+
+La información de las visitas se guardará en una tabla Visit.
+
+Cada objeto Visit representará una visita a la URL corta y contendrá información acerca de la visita:
+
+la fecha de la visita y
+la procedencia de la misma.
 
 [Repositorio](https://github.com/SYTW-1/UrlShortStadistic)
 
@@ -13,18 +20,6 @@ Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que adm
 
 [gh-pages](http://sytw-1.github.io/UrlShortStadistic)
 
-# Shortened URLS
-
-Acortador de urls con autenticación con Google
-
-
-See
-
-* [DataMapper](http://datamapper.org/getting-started.html)
-* [Haml](http://haml.info/)
-* [Sinatra](http://www.sinatrarb.com/)
-* [Deploying Rack-based Apps in Heroku](https://devcenter.heroku.com/articles/rack)
-* [Intridea Omniauth](https://github.com/intridea/omniauth)
 
 ## Problemas con las gemas postgree
 
