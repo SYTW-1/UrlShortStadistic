@@ -54,7 +54,7 @@ class Visit
   end
 
   def self.as_map(identifier)
-    repository(:default).adapter.query("SELECT country_code, city, latitude, longitude, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY latitude AND longitude")
+    repository(:default).adapter.query("SELECT country_code, city, latitude, longitude, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY country_code, city, latitude, longitude")
   end
 
   def self.count_by_date_with(identifier,num_of_days)
