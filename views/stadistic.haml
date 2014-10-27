@@ -1,0 +1,23 @@
+.panel.panel-primary
+    .panel-heading
+        %h1 URL's más vistas
+    .panel-body
+        %table.table
+            %tr
+                %th
+                    URL Corta
+                %th
+                    Visitas
+                %th
+                    Autor
+            - @short_url.each do |item|
+                %tr
+                    %td
+                        %a{:href => "/#{item.urlshort}"} #{item.urlshort}
+                    %td
+                        #{item.n_visits}
+                    %td
+                        - if item.email != nil
+                            #{item.email}
+                        - else
+                            %a{:href => "/stadistic/public"} Pública
