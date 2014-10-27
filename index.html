@@ -34,41 +34,62 @@
         <h1>
 <a name="sistemas-y-tecnolog%C3%ADas-web" class="anchor" href="#sistemas-y-tecnolog%C3%ADas-web"><span class="octicon octicon-link"></span></a>Sistemas y Tecnologías Web:</h1>
 
-<p><a href="https://travis-ci.org/SYTW-1/shortened_urls"><img src="https://travis-ci.org/SYTW-1/shortened_urls.svg?branch=master" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/SYTW-1/UrlShortStadistic"><img src="https://travis-ci.org/SYTW-1/UrlShortStadistic.svg" alt="Build Status"></a></p>
 
 <h2>
-<a name="pr%C3%A1ctica-acortador-de-urls" class="anchor" href="#pr%C3%A1ctica-acortador-de-urls"><span class="octicon octicon-link"></span></a>Práctica: Acortador de URLs</h2>
+<a name="pr%C3%A1ctica-estad%C3%ADsticas-de-visitas-al-acortador-de-urls" class="anchor" href="#pr%C3%A1ctica-estad%C3%ADsticas-de-visitas-al-acortador-de-urls"><span class="octicon octicon-link"></span></a>Práctica: Estadísticas de Visitas al Acortador de URLs</h2>
 
 <p><strong>Autor:</strong> Eliezer Cruz Suárez: alu0100611298
 <strong>Autor:</strong> Nestor Alvarez Díaz: alu0100594973</p>
 
-<p>Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que admita además abreviaciones elegidas por el usuario.</p>
+<p>En esta práctica extendemos la anterior 40.9 con información estadística acerca de las visitas. Se pide que se presenten gráficos estadísticos (barras, etc.) del número de visitas por día, por país, etc.</p>
 
-<p><a href="https://github.com/SYTW-1/shortened_urls.git">Repositorio</a></p>
+<p>La información de las visitas se guardará en una tabla Visit.</p>
 
-<p><a href="https://shorted.herokuapp.com/">Heroku</a></p>
+<p>Cada objeto Visit representará una visita a la URL corta y contendrá información acerca de la visita:</p>
 
-<p><a href="http://sytw-1.github.io/shortened_urls">gh-pages</a></p>
+<p>la fecha de la visita y
+la procedencia de la misma.</p>
 
-<h1>
-<a name="shortened-urls" class="anchor" href="#shortened-urls"><span class="octicon octicon-link"></span></a>Shortened URLS</h1>
+<p><a href="https://github.com/SYTW-1/UrlShortStadistic">Repositorio</a></p>
 
-<p>Acortador de urls con autenticación con Google</p>
+<p><a href="http://shortedstadistic.herokuapp.com/">Heroku</a></p>
 
-<p>See</p>
+<p><a href="http://sytw-1.github.io/UrlShortStadistic">gh-pages</a></p>
+
+<h2>
+<a name="funcionamiento" class="anchor" href="#funcionamiento"><span class="octicon octicon-link"></span></a>Funcionamiento</h2>
+
+<p>Hay dos maneras de ejecutar la aplicacion</p>
+
+<ol>
+<li>
+<p>Accediendo a Heroku</p>
+
+<p><a href="http://shortedstadistic.herokuapp.com/">shortedstadistic</a></p>
+</li>
+<li>
+<p>Ejecucion el local</p>
 
 <ul>
-<li><a href="http://datamapper.org/getting-started.html">DataMapper</a></li>
-<li><a href="http://haml.info/">Haml</a></li>
-<li><a href="http://www.sinatrarb.com/">Sinatra</a></li>
-<li><a href="https://devcenter.heroku.com/articles/rack">Deploying Rack-based Apps in Heroku</a></li>
-<li><a href="https://github.com/intridea/omniauth">Intridea Omniauth</a></li>
+<li>Clonamos la aplicacion el local
+<code>git clone git@github.com:SYTW-1/UrlShortStadistic.git</code>
+</li>
+<li>Instalamos las gemas
+<code>bundle install</code>
+</li>
+<li>Modificamos el archivo config.yml con nuestras claves</li>
+<li>Arrancamos el servidor
+<code>rake server</code>
+</li>
 </ul>
+</li>
+</ol>
 
 <h2>
 <a name="problemas-con-las-gemas-postgree" class="anchor" href="#problemas-con-las-gemas-postgree"><span class="octicon octicon-link"></span></a>Problemas con las gemas postgree</h2>
 
-<p>Siga los siguientes pasos:</p>
+<p>Siga los siguientes pasos desde la consola:</p>
 
 <ul>
 <li>sudo apt-get install libpq-dev</li>
