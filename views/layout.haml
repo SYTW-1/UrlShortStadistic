@@ -26,11 +26,6 @@
                     %ul.nav.navbar-nav.navbar-right
                         %li.hidden
                             %a{:href => "#page-top"}
-                        %li.page-scroll
-                            %a{:href => "/stadistic"}
-                                %button.btn.btn-success
-                                    %i.fa.fa-bar-chart
-                                    Estadísticas
                         - if !session[:uid]
                             %li.page-scroll
                                 %a{:href => "/auth/github"}

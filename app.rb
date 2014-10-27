@@ -180,10 +180,9 @@ def map(visit)
   str = ''
   visit.as_map(params[:short_url]).each do |item|
     if (item.latitude != nil)
-      puts item
-      puts "______________"
       item.city = (item.city == '{}') ? item.country : item.city
       str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+
               var infowindow = new google.maps.InfoWindow({
                   map: map,
                   position: pos,
