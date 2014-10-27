@@ -165,7 +165,15 @@ end
 def get_country(ip)
   xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"
   xml1 = RestClient.get "http://ip-api.com/xml/#{ip}"
-  XmlSimple.xml_in(xml.to_s)['featureMember'][0]['Hostip'][0]['countryName'][0]
+  country = XmlSimple.xml_in(xml.to_s)['featureMember'][0]['Hostip'][0]['countryName'][0]
+  if ('(Unknown Country?)' == country)
+    xml = RestClient.get "http://ip-api.com/xml/#{ip}"
+    country = XmlSimple.xml_in(xml1.to_s)['country'][0]
+  end
+  country = country.upcase
+  puts "________________________________________"
+  puts country 
+  country
 end
 
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
