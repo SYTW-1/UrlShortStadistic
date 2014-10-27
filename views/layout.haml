@@ -20,12 +20,17 @@
                         %span.icon-bar
                         %span.icon-bar
                         %span.icon-bar
-                    %a.navbar-brand{:href => "#page-top"} URL's Shortened
+                    %a.navbar-brand{:href => "/"} URL's Shortened
                 / Collect the nav links, forms, and other content for toggling
                 #bs-example-navbar-collapse-1.collapse.navbar-collapse
                     %ul.nav.navbar-nav.navbar-right
                         %li.hidden
-                            %a{:href => "#page-top"}
+                            %a{:href => "/"}
+                        %li.page-scroll
+                            %a{:href => "/stadistic"}
+                                %button.btn.btn-success
+                                    %i.fa.fa-pie-chart
+                                    Estadísticas
                         - if !session[:uid]
                             %li.page-scroll
                                 %a{:href => "/auth/github"}
