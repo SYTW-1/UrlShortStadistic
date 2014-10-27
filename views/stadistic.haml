@@ -20,7 +20,7 @@
                         #{item.n_visits}
                     %td
                         - if item.email != nil
-                            #{item.email}
+                            %a{:href => "/stadistic/#{item.email}"} #{item.email}
                         - else
                             %a{:href => "/stadistic/public"} Pública
                         %td
