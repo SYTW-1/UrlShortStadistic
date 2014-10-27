@@ -153,9 +153,9 @@ def get_remote_ip(env)
 end
 
 def get_geo
-  xml = RestClient.get "http://freegeoip.net/xml/"
+  xml = RestClient.get "http://freegeoip.net/xml/#{get_remote_ip(env)}"
   data = XmlSimple.xml_in(xml.to_s)
-  {"ip" => (get_remote_ip(env)).to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
+  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
 end
 
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
