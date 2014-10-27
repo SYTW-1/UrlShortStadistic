@@ -101,11 +101,11 @@ get '/stadistic' do
   haml :stadistic, :layout => :admin
 end
 
-get '/delete' do
-  Shortenedurl.all.destroy
-  Visit.all.destroy
-  redirect '/'
-end
+#get '/delete' do
+#  Shortenedurl.all.destroy
+#  Visit.all.destroy
+#  redirect '/'
+#end
 
 post '/' do
   puts "inside post '/': #{params}"
