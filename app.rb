@@ -101,10 +101,11 @@ get '/stadistic' do
   haml :stadistic, :layout => :admin
 end
 
-#get '/delete' do
-#  Shortenedurl.all.destroy
-#  redirect '/'
-#end
+get '/delete' do
+  Shortenedurl.all.destroy
+  Visit.all.destroy
+  redirect '/'
+end
 
 post '/' do
   puts "inside post '/': #{params}"
@@ -138,11 +139,23 @@ get '/:shortened' do
   redirect short_url.url, 301
 end
 
+#error do haml :index end
+def get_remote_ip(env)
+  puts "request.url = #{request.url}"
+  puts "request.ip = #{request.ip}"
+  if addr = env['HTTP_X_FORWARDED_FOR']
+    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+    addr.split(',').first.strip
+  else
+    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+    env['REMOTE_ADDR']
+  end
+end
 
 def get_geo
   xml = RestClient.get "http://freegeoip.net/xml/"
   data = XmlSimple.xml_in(xml.to_s)
-  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
+  {"ip" => (get_remote_ip(env))to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
 end
 
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
