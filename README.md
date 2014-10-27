@@ -20,10 +20,27 @@ la procedencia de la misma.
 
 [gh-pages](http://sytw-1.github.io/UrlShortStadistic)
 
+##Funcionamiento
+
+Hay dos maneras de ejecutar la aplicacion
+
+1. Accediendo a Heroku
+
+	[Heroku](http://shortedstadistic.herokuapp.com/)
+
+2. Ejecucion el local
+
+	* Clonamos la aplicacion el local
+		`git clone git@github.com:SYTW-1/UrlShortStadistic.git`
+	* Instalamos las gemas
+		`bundle install`
+	* Modificamos el archivo config.yml con nuestras claves
+	* Arrancamos el servidor
+		`rake server`
 
 ## Problemas con las gemas postgree
 
-Siga los siguientes pasos:
+Siga los siguientes pasos desde la consola:
 
 * sudo apt-get install libpq-dev
 * gem install pg
