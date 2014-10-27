@@ -97,8 +97,17 @@ get '/logout' do
   redirect '/'
 end
 
-get '/stadistic' do
-  haml :stadistic, :layout => :admin
+['/stadistic', '/stadistic/:user'].each do |path|
+  get path do
+    if params[:user] == 'public'
+      @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
+    elsif params[:users] != nil
+      @short_url = Shortenedurl.all(:email => params[:user], :order => [:n_visits.desc])
+    else
+      @short_url = Shortenedurl.all(:order => [:n_visits.desc])
+    end
+    haml :stadistic, :layout => :admin
+  end
 end
 
 get '/delete' do
