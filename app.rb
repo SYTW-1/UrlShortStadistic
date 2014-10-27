@@ -143,6 +143,7 @@ end
 def get_remote_ip(env)
   puts "request.url = #{request.url}"
   puts "request.ip = #{request.ip}"
+  puts env
   if addr = env['HTTP_X_FORWARDED_FOR']
     puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
     addr.split(',').first.strip
@@ -178,8 +179,8 @@ end
 def map(visit)
   str = ''
   visit.as_map(params[:short_url]).each do |item|
-    puts item.latitude
     if (item.latitude != nil)
+      item.city = (item.city == '') ? item.country : item.city
       str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
               var infowindow = new google.maps.InfoWindow({
                   map: map,
