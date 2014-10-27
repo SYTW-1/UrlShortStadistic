@@ -23,22 +23,20 @@ describe "shortened urls" do
 
 		@short_url = Shortenedurl.first_or_create(:uid => @user, :email => @email, :url => @url, :urlshort => @urlshort, :n_visits => 0)
 		@short_url1 = Shortenedurl.first(:urlshort => @urlshort)
-
-  		@short_url.n_visits += 1
   		@visit = Visit.new(:ip => @ip, :country => @country, :countryCode => @countryCode, :city => @city, :latitude => @latitude, :longitude => @longitude, :shortenedurl => @short_url1, :created_at => Time.now)
-  		@visit.save!
+  		@visit.save
 	end
 
 	it "El usuario de la consulta es 0000" do
-		assert '0000', @short_url1.uid
+		assert_equal '0000', @short_url1.uid
 	end
 
 	it "El email de la consulta es test@email.es" do
-		assert @email, @short_url1.email
+		assert_equal @email, @short_url1.email
 	end
 
 	it "Se comprueba que la entrada esta en la base de datos" do
-		assert @urlshort, @short_url1.urlshort
+		assert_equal @urlshort, @short_url1.urlshort
 	end
 
 	it "La url larga coincide" do
@@ -46,8 +44,39 @@ describe "shortened urls" do
 	end
 
 	it "El numero de visitas es 1" do
-		assert 1, @short_url1.n_visits
+		assert_equal 0, @short_url1.n_visits
 	end
 
+	it "La ip es 88.10.68.232" do
+		assert_equal @ip, @visit.ip.to_s
+	end
+
+	it "La ciudad es SPAIN" do
+		assert_equal @country, @visit.country
+	end
+
+	it "El codigo de ciudad es SP" do
+		assert_equal @countryCode, @visit.countryCode
+	end
+
+	it "La ciudad es santa cruz" do
+		assert_equal @city, @visit.city
+	end
+
+	it "La latitud es 0000" do
+		assert_equal @latitude, @visit.latitude
+	end
+
+	it "La longitud es 1111" do
+		assert_equal @longitude, @visit.longitude
+	end
+
+	it "La longitud es 1111" do
+		assert_equal @longitude, @visit.longitude
+	end
+
+	it "La url corta coincide" do
+		assert_equal @urlshort, @visit.shortenedurl.urlshort
+	end
 	
 end
