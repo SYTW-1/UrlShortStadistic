@@ -9,7 +9,7 @@ Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que adm
 
 [Repositorio](https://github.com/SYTW-1/shortened_urls.git)
 
-[Heroku](https://shorted.herokuapp.com/)
+[Heroku](http://shortedstadistic.herokuapp.com/)
 
 [gh-pages](http://sytw-1.github.io/shortened_urls)
 
