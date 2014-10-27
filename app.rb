@@ -132,7 +132,7 @@ get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
   short_url.n_visits += 1
-  ip = get_remote_ip
+  ip = get_remote_ip(env)
   address = get_country(ip)
   visit = Visit.new(:created_at => Time.now, :ip => ip, :country => address, :shortenedurl => short_url)
   visit.save!
