@@ -22,9 +22,13 @@ class Visit
   include DataMapper::Resource
   
   property  :id,          Serial
-  property  :created_at,  DateTime
   property  :ip,          IPAddress
   property  :country,     String
+  property  :countryCode, String
+  property  :city,        String
+  property  :latitude,    String
+  property  :longitude,   String
+  property  :created_at,  DateTime
 
   belongs_to  :shortenedurl
   
@@ -44,9 +48,13 @@ class Visit
     chart[:bar] = "http://chart.apis.google.com/chart?chs=320x240&cht=bhs&chco=a4b3f4&chm=N,000000,0,-1,11&chbh=a&chd=t:#{count.join(',')}&chxt=x,y&chxl=1:|#{countries.reverse.join('|')}"
     return chart
   end
-  
+
   def self.as_date(identifier)
     repository(:default).adapter.query("SELECT date(created_at) AS date, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY date(created_at)")
+  end
+
+  def self.as_map(identifier)
+    repository(:default).adapter.query("SELECT country_code, city, latitude, longitude, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY latitude AND longitude")
   end
 
   def self.count_by_date_with(identifier,num_of_days)
