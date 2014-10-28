@@ -51,14 +51,23 @@ get '/index' do
   haml :index
 end
 
-get '/' do
-  if !session[:uid]
-    puts "inside get '/': #{params}"
-    @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
-    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
-    haml :index
-  else
-    redirect '/session'
+['/', '/:error'].each do |path|
+  get path do
+    if params[:error] == "ERROR"
+      @message = "La url esta cogida"
+    elsif params[:error] != nil
+      @message =  "La url no existe"
+    else
+      @message = nil
+    end
+    if !session[:uid]
+      puts "inside get '/': #{params}"
+      @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
+      # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
+      haml :index
+    else
+      redirect '/session'
+    end
   end
 end
 
@@ -96,34 +105,42 @@ get '/logout' do
   redirect '/'
 end
 
-get '/stadistic' do
-  get_ip()
-  haml :stadistic, :layout => :admin
+['/stadistic', '/stadistic/:user'].each do |path|
+  get path do
+    if params[:user] == 'public'
+      @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
+    elsif params[:user] != nil
+      @short_url = Shortenedurl.all(:email => params[:user], :order => [:n_visits.desc])
+    else
+      @short_url = Shortenedurl.all(:order => [:n_visits.desc])
+    end
+    haml :stadistic, :layout => :admin
+  end
 end
 
-def get_ip()
- puts "request.ip = #{request.ip}"
-end
-
-def get_info_hours()
-
-end
 #get '/delete' do
 #  Shortenedurl.all.destroy
+#  Visit.all.destroy
 #  redirect '/'
 #end
 
 post '/' do
+  @message = ""
   puts "inside post '/': #{params}"
   uri = URI::parse(params[:url])
   if uri.is_a? URI::HTTP or uri.is_a? URI::HTTPS then
-    begin
-      sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
-      @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
-    rescue Exception => e
-      puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
-      pp @short_url
-      puts e.message
+    if !Shortenedurl.first(:urlshort => params[:urlshort])      
+      begin
+        sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
+        @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
+      rescue Exception => e
+        puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
+        pp @short_url
+        puts e.message
+      end
+    else
+      @message = "ERROR"
+      redirect "/#{@message}"
     end
   else
     logger.info "Error! <#{params[:url]}> is not a valid URL"
@@ -135,25 +152,22 @@ post '/' do
   end
 end
 
-get '/:shortened' do
+get '/visitar/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = Shortenedurl.first(:urlshort => params[:shortened])
-  short_url.visits << Visit.create(:ip => get_remote_ip(env))
+  short_url.n_visits += 1
   short_url.save
-
-  # HTTP status codes that start with 3 (such as 301, 302) tell the
-  # browser to go look for that resource in another location. This is
-  # used in the case where a web page has moved to another location or
-  # is no longer at the original location. The two most commonly used
-  # redirection status codes are 301 Move Permanently and 302 Found.
+  data = get_geo
+  visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
+  visit.save
   redirect short_url.url, 301
 end
 
-error do haml :index end
-
+#error do haml :index end
 def get_remote_ip(env)
   puts "request.url = #{request.url}"
   puts "request.ip = #{request.ip}"
+  puts env
   if addr = env['HTTP_X_FORWARDED_FOR']
     puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
     addr.split(',').first.strip
@@ -163,15 +177,43 @@ def get_remote_ip(env)
   end
 end
 
+def get_geo
+  xml = RestClient.get "http://freegeoip.net/xml/#{get_remote_ip(env)}"
+  data = XmlSimple.xml_in(xml.to_s)
+  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
+end
+
 ['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
   get path do
     @link = Shortenedurl.first(:urlshort => params[:short_url])
     @visit = Visit.all()
-    @num_of_days = (params[:num_of_days] || 15).to_i
-    @count_days_bar = Visit.count_days_bar(params[:short_url], @num_of_days)
-    chart = Visit.count_country_chart(params[:short_url], params[:map] || 'world')
-    @count_country_map = chart[:map]
-    @count_country_bar = chart[:bar]
-    haml :info
+    @country = Hash.new
+    @visit.count_by_country_with(params[:short_url]).to_a.each do |item|
+      @country[item.country] = item.count
+    end
+    @days = Hash.new
+    @visit.as_date(params[:short_url]).each do |item|
+      @days[item.date] = item.count
+    end
+    @str = map(@visit)
+    haml :info, :layout => :admin
   end
+end
+
+def map(visit)
+  str = ''
+  visit.as_map(params[:short_url]).each do |item|
+    if (item.latitude != nil)
+      item.city = (item.city == '{}') ? item.country : item.city
+      str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+
+              var infowindow = new google.maps.InfoWindow({
+                  map: map,
+                  position: pos,
+                  content: \" #{item.city}: #{item.count} \"
+              });
+              map.setCenter(pos);"
+    end
+  end
+  str
 end

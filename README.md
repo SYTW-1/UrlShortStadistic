@@ -1,34 +1,46 @@
 # Sistemas y Tecnologías Web:
-[![Build Status](https://travis-ci.org/SYTW-1/shortened_urls.svg?branch=master)](https://travis-ci.org/SYTW-1/shortened_urls)
-##Práctica: Acortador de URLs
+[![Build Status](https://travis-ci.org/SYTW-1/UrlShortStadistic.svg)](https://travis-ci.org/SYTW-1/UrlShortStadistic)
+##Práctica: Estadísticas de Visitas al Acortador de URLs
 
 **Autor:** Eliezer Cruz Suárez: alu0100611298
 **Autor:** Nestor Alvarez Díaz: alu0100594973
 
-Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que admita además abreviaciones elegidas por el usuario.
+En esta práctica extendemos la anterior 40.9 con información estadística acerca de las visitas. Se pide que se presenten gráficos estadísticos (barras, etc.) del número de visitas por día, por país, etc.
 
-[Repositorio](https://github.com/SYTW-1/shortened_urls.git)
+La información de las visitas se guardará en una tabla Visit.
 
-[Heroku](https://shorted.herokuapp.com/)
+Cada objeto Visit representará una visita a la URL corta y contendrá información acerca de la visita:
 
-[gh-pages](http://sytw-1.github.io/shortened_urls)
+la fecha de la visita y
+la procedencia de la misma.
 
-# Shortened URLS
+[Repositorio](https://github.com/SYTW-1/UrlShortStadistic)
 
-Acortador de urls con autenticación con Google
+[Heroku](http://shortedstadistic.herokuapp.com/)
 
+[gh-pages](http://sytw-1.github.io/UrlShortStadistic)
 
-See
+##Funcionamiento
 
-* [DataMapper](http://datamapper.org/getting-started.html)
-* [Haml](http://haml.info/)
-* [Sinatra](http://www.sinatrarb.com/)
-* [Deploying Rack-based Apps in Heroku](https://devcenter.heroku.com/articles/rack)
-* [Intridea Omniauth](https://github.com/intridea/omniauth)
+Hay dos maneras de ejecutar la aplicacion
+
+1. Accediendo a Heroku
+
+	[shortedstadistic](http://shortedstadistic.herokuapp.com/)
+
+2. Ejecucion el local
+
+	* Clonamos la aplicacion el local
+		`git clone git@github.com:SYTW-1/UrlShortStadistic.git`
+	* Instalamos las gemas
+		`bundle install`
+	* Modificamos el archivo config.yml con nuestras claves
+	* Arrancamos el servidor
+		`rake server`
 
 ## Problemas con las gemas postgree
 
-Siga los siguientes pasos:
+Siga los siguientes pasos desde la consola:
 
 * sudo apt-get install libpq-dev
 * gem install pg

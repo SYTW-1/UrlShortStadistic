@@ -2,6 +2,7 @@ require 'dm-core'
 require 'dm-migrations'
 require 'restclient'
 require 'xmlsimple'
+require 'dm-timestamps'
 
 class Shortenedurl
   include DataMapper::Resource
@@ -21,19 +22,16 @@ class Visit
   include DataMapper::Resource
   
   property  :id,          Serial
-  property  :created_at,  DateTime
   property  :ip,          IPAddress
   property  :country,     String
+  property  :countryCode, String
+  property  :city,        String
+  property  :latitude,    String
+  property  :longitude,   String
+  property  :created_at,  DateTime
 
   belongs_to  :shortenedurl
   
-  after :create, :set_country
-  
-  def set_country
-    xml = RestClient.get "http://api.hostip.info/get_xml.php?ip=#{ip}"  
-    self.country = XmlSimple.xml_in(xml.to_s, { 'ForceArray' => false })['featureMember']['Hostip']['countryAbbrev']
-    self.save
-  end
   
   def self.count_days_bar(identifier,num_of_days)
     visits = count_by_date_with(identifier,num_of_days)
@@ -50,9 +48,17 @@ class Visit
     chart[:bar] = "http://chart.apis.google.com/chart?chs=320x240&cht=bhs&chco=a4b3f4&chm=N,000000,0,-1,11&chbh=a&chd=t:#{count.join(',')}&chxt=x,y&chxl=1:|#{countries.reverse.join('|')}"
     return chart
   end
-  
+
+  def self.as_date(identifier)
+    repository(:default).adapter.select("SELECT date(created_at) AS date, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY date(created_at)")
+  end
+
+  def self.as_map(identifier)
+    repository(:default).adapter.select("SELECT country, city, latitude, longitude, count(*) AS count FROM visits WHERE shortenedurl_urlshort = '#{identifier}' GROUP BY country, city, latitude, longitude")
+  end
+
   def self.count_by_date_with(identifier,num_of_days)
-    visits = repository(:default).adapter.query("SELECT date(created_at) as date, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' and created_at between CURRENT_DATE-#{num_of_days} and CURRENT_DATE+1 group by date(created_at)")
+    visits = repository(:default).adapter.select("SELECT date(created_at) as date, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' and date(created_at) between CURRENT_DATE-#{num_of_days} and CURRENT_DATE+1 group by date(created_at)")
     dates = (Date.today-num_of_days..Date.today)
     results = {}
     dates.each { |date|
@@ -63,6 +69,6 @@ class Visit
   end
   
   def self.count_by_country_with(identifier)
-    repository(:default).adapter.query("SELECT country, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' group by country")    
+    repository(:default).adapter.select("SELECT country, count(*) as count FROM visits where shortenedurl_urlshort = '#{identifier}' group by country")
   end
 end

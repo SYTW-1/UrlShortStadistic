@@ -1,6 +1,7 @@
 !!!
 %html
     %head
+        %meta{:name=>"viewport", :content=>"initial-scale=1.0, user-scalable=no"}
         %title Acortador de URLs
         %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
         %link{:type => "text/css", :rel => "stylesheet", :href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"}
@@ -8,9 +9,11 @@
         %link{:type => "text/css", :rel => "stylesheet", :href => "http://fonts.googleapis.com/css?family=Montserrat:400,700"}
         %link{:type => "text/css", :rel => "stylesheet", :href=>"https://raw.githubusercontent.com/IronSummitMedia/startbootstrap/gh-pages/templates/freelancer/css/freelancer.css"}
         %link{:type => "text/css", :rel => "stylesheet", :href=>"//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"}
+        %link{:type => "text/css", :rel => "stylesheet", :href=>"/style.css"}
+        %script(src="/show.js")
     %body#page-top.index
         / Navigation
-        %nav.navbar.navbar-default.navbar-fixed-top.navbar-inverse
+        %nav.navbar.navbar-default.navbar-inverse
             .container
                 / Brand and toggle get grouped for better mobile display
                 .navbar-header.page-scroll
@@ -19,16 +22,16 @@
                         %span.icon-bar
                         %span.icon-bar
                         %span.icon-bar
-                    %a.navbar-brand{:href => "#page-top"} URL's Shortened
+                    %a.navbar-brand{:href => "/"} URL's Shortened
                 / Collect the nav links, forms, and other content for toggling
                 #bs-example-navbar-collapse-1.collapse.navbar-collapse
                     %ul.nav.navbar-nav.navbar-right
                         %li.hidden
-                            %a{:href => "#page-top"}
+                            %a{:href => "/"}
                         %li.page-scroll
                             %a{:href => "/stadistic"}
                                 %button.btn.btn-success
-                                    %i.fa.fa-bar-chart
+                                    %i.fa.fa-pie-chart
                                     Estadísticas
                         - if !session[:uid]
                             %li.page-scroll
@@ -77,13 +80,16 @@
                         %form(action="/" method="POST")
                             .input-group
                                 %span.input-group-addon URL
-                                %input.form-control(type="text" name="url" id="myurl" autofocus size=100 accesskey="s" placeholder="Large URL")
+                                %input.form-control(type="text" name="url" id="myurl"  size=100 accesskey="s" placeholder="Large URL")
                             %br
                             .input-group
                                 %span.input-group-addon URL
-                                %input.form-control(type="text" name="urlshort" id="myurlshort" autofocus size=100 accesskey="s" placeholder="Shortened URL")
+                                %input.form-control(type="text" name="urlshort" id="myurlshort"  size=100 accesskey="s" placeholder="Shortened URL")
                             %br
                             %input.btn.btn-success(type="submit" value="Shorten")
+                    - if @message != nil
+                        #ERROR.alert.alert-danger
+                            %span #{@message}
         %br
         %br
         %nav.navbar-fixed-bottom.navbar-inverse
