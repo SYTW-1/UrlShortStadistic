@@ -13,13 +13,6 @@ require 'omniauth-facebook'
 require 'chartkick'
 %w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
 
-use OmniAuth::Builder do
-  config = YAML.load_file 'config/config.yml'
-  provider :google_oauth2, config['identifier_google'], config['secret_google']
-  provider :github, config['identifier_github'], config['secret_github']
-  provider :facebook, config['identifier_facebook'], config['secret_facebook']
-end
-
 enable :sessions
 set :session_secret, '*&(^#234a)'
 
@@ -45,38 +38,12 @@ DataMapper.finalize
 #DataMapper.auto_migrate!
 DataMapper.auto_upgrade!
 
-Base = 36
-
-get '/index' do
-  haml :index
-end
-
-['/', '/:error'].each do |path|
-  get path do
-    if params[:error] == "ERROR"
-      @message = "La url esta cogida"
-    elsif params[:error] != nil
-      @message =  "La url no existe"
-    else
-      @message = nil
-    end
-    if !session[:uid]
-      puts "inside get '/': #{params}"
-      @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
-      # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
-      haml :index
-    else
-      redirect '/session'
-    end
-  end
-end
-
-get '/visitado' do
-    puts "inside get '/': #{params}"
-    @list = Shortenedurl.visits.all()
-    puts @list
-    puts "-------------------------------------------"
-    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
+#OmniAuth y get's de autenticación
+use OmniAuth::Builder do
+  config = YAML.load_file 'config/config.yml'
+  provider :google_oauth2, config['identifier_google'], config['secret_google']
+  provider :github, config['identifier_github'], config['secret_github']
+  provider :facebook, config['identifier_facebook'], config['secret_facebook']
 end
 
 get '/auth/:name/callback' do
@@ -94,18 +61,38 @@ get '/auth/:name/callback' do
   haml :user
 end
 
-get '/session' do
-  @list = Shortenedurl.all(:uid => session[:uid])
-  haml :user
-end
-
-get '/logout' do
+get '/auth/logout' do
   session.clear
-  #redirect 'https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=' + to('/')
   redirect '/'
 end
+#Fin de: OmniAuth y get's de autenticación
 
-['/stadistic', '/stadistic/:user'].each do |path|
+#Get's /, errores
+['/', '/:error'].each do |path|
+  get path do
+    if params[:error] == "ERROR"
+      @message = "La url esta cogida"
+    elsif params[:error] != nil
+      @message =  "La url no existe"
+    else
+      @message = nil
+    end
+    if !session[:uid]
+      puts "inside get '/': #{params}"
+      @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
+      haml :index
+    else
+      @list = Shortenedurl.all(:uid => session[:uid])
+      haml :user
+    end
+  end
+end
+
+
+#Dependientes de info
+
+#Get's para estadísticas y filtrado de usuarios en estadisticas
+['/info/stadistic', '/info/stadistic/:user'].each do |path|
   get path do
     if params[:user] == 'public'
       @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
@@ -118,12 +105,38 @@ end
   end
 end
 
-#get '/delete' do
-#  Shortenedurl.all.destroy
-#  Visit.all.destroy
-#  redirect '/'
-#end
+#Get's para info por URL
+['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
+  get path do
+    @link = Shortenedurl.first(:urlshort => params[:short_url])
+    @visit = Visit.all()
+    @country = Hash.new
+    @visit.count_by_country_with(params[:short_url]).to_a.each do |item|
+      @country[item.country] = item.count
+    end
+    @days = Hash.new
+    @visit.as_date(params[:short_url]).each do |item|
+      @days[item.date] = item.count
+    end
+    @str = map(@visit)
+    haml :info, :layout => :admin
+  end
+end
+#Fin de: dependencias de info
 
+#Get para visitar una URL corta
+get '/visitar/:shortened' do
+  puts "inside get '/:shortened': #{params}"
+  short_url = Shortenedurl.first(:urlshort => params[:shortened])
+  short_url.n_visits += 1
+  short_url.save
+  data = get_geo
+  visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
+  visit.save
+  redirect short_url.url, 301
+end
+
+#Post para nuevas URL's
 post '/' do
   @message = ""
   puts "inside post '/': #{params}"
@@ -152,18 +165,7 @@ post '/' do
   end
 end
 
-get '/visitar/:shortened' do
-  puts "inside get '/:shortened': #{params}"
-  short_url = Shortenedurl.first(:urlshort => params[:shortened])
-  short_url.n_visits += 1
-  short_url.save
-  data = get_geo
-  visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
-  visit.save
-  redirect short_url.url, 301
-end
-
-#error do haml :index end
+#Funciones para obtener IP, Geolocalizacion y contruir el mapa con la API
 def get_remote_ip(env)
   puts "request.url = #{request.url}"
   puts "request.ip = #{request.ip}"
@@ -183,22 +185,6 @@ def get_geo
   {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
 end
 
-['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
-  get path do
-    @link = Shortenedurl.first(:urlshort => params[:short_url])
-    @visit = Visit.all()
-    @country = Hash.new
-    @visit.count_by_country_with(params[:short_url]).to_a.each do |item|
-      @country[item.country] = item.count
-    end
-    @days = Hash.new
-    @visit.as_date(params[:short_url]).each do |item|
-      @days[item.date] = item.count
-    end
-    @str = map(@visit)
-    haml :info, :layout => :admin
-  end
-end
 
 def map(visit)
   str = ''
@@ -216,4 +202,13 @@ def map(visit)
     end
   end
   str
+end
+
+#Get's y funciones de debug
+get '/debug/visitado' do
+    puts "inside get '/': #{params}"
+    @list = Shortenedurl.visits.all()
+    puts @list
+    puts "-------------------------------------------"
+    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
 end

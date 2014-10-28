@@ -32,7 +32,7 @@
                         %li.hidden
                             %a{:href => "#page-top"}
                         %li.page-scroll
-                            %a{:href => "/stadistic"}
+                            %a{:href => "/info/stadistic"}
                                 %button.btn.btn-success
                                     %i.fa.fa-pie-chart
                                     Estadísticas
@@ -54,7 +54,7 @@
                                         Sign In with Facebook
                         - else
                             %li.page-scroll
-                                %a{:href => "/logout"}
+                                %a{:href => "/auth/logout"}
                                     %button.btn.btn-danger
                                         - if session[:plt] == 'github'
                                             %i.fa.fa-github
