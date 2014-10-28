@@ -52,14 +52,17 @@ get '/index' do
   haml :index
 end
 
-get '/' do
-  if !session[:uid]
-    puts "inside get '/': #{params}"
-    @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
-    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
-    haml :index
-  else
-    redirect '/session'
+['/', '/:error'].each do |path|
+  get path do
+    @message = params[:error]
+    if !session[:uid]
+      puts "inside get '/': #{params}"
+      @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
+      # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
+      haml :index
+    else
+      redirect '/session'
+    end
   end
 end
 
@@ -117,16 +120,22 @@ end
 #end
 
 post '/' do
+  @message = ""
   puts "inside post '/': #{params}"
   uri = URI::parse(params[:url])
   if uri.is_a? URI::HTTP or uri.is_a? URI::HTTPS then
-    begin
-      sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
-      @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
-    rescue Exception => e
-      puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
-      pp @short_url
-      puts e.message
+    if !Shortenedurl.first(:urlshort => params[:urlshort])      
+      begin
+        sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
+        @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
+      rescue Exception => e
+        puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
+        pp @short_url
+        puts e.message
+      end
+    else
+      @message = "Mensaje: La url corta esta recogida pruebe con otra"
+      redirect "/#{@message}"
     end
   else
     logger.info "Error! <#{params[:url]}> is not a valid URL"
