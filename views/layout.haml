@@ -78,15 +78,15 @@
                         %form(action="/" method="POST")
                             .input-group
                                 %span.input-group-addon URL
-                                %input.form-control(type="text" name="url" id="myurl" autofocus size=100 accesskey="s" placeholder="Large URL")
+                                %input.form-control(type="text" name="url" id="myurl"  size=100 accesskey="s" placeholder="Large URL")
                             %br
                             .input-group
                                 %span.input-group-addon URL
-                                %input.form-control(type="text" name="urlshort" id="myurlshort" autofocus size=100 accesskey="s" placeholder="Shortened URL")
+                                %input.form-control(type="text" name="urlshort" id="myurlshort"  size=100 accesskey="s" placeholder="Shortened URL")
                             %br
                             %input.btn.btn-success(type="submit" value="Shorten")
                     - if @message != nil
-                        .alert.alert-danger
+                        #ERROR.alert.alert-danger
                             #{@message}
         %br
         %br
