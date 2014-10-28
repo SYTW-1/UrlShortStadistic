@@ -54,7 +54,13 @@ end
 
 ['/', '/:error'].each do |path|
   get path do
-    @message = params[:error]
+    if params[:error] == "ERROR"
+      @message = "La url esta cogida"
+    elsif params[:error] != nil
+      @message =  "La url no existe"
+    else
+      @message = nil
+    end
     if !session[:uid]
       puts "inside get '/': #{params}"
       @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
@@ -134,7 +140,7 @@ post '/' do
         puts e.message
       end
     else
-      @message = "Mensaje: La url corta esta recogida pruebe con otra"
+      @message = "ERROR"
       redirect "/#{@message}"
     end
   else

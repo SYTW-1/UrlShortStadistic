@@ -85,7 +85,9 @@
                                 %input.form-control(type="text" name="urlshort" id="myurlshort" autofocus size=100 accesskey="s" placeholder="Shortened URL")
                             %br
                             %input.btn.btn-success(type="submit" value="Shorten")
-                    %p #{@message}
+                    - if @message != nil
+                        .alert.alert-danger
+                            #{@message}
         %br
         %br
         %nav.navbar-fixed-bottom.navbar-inverse
