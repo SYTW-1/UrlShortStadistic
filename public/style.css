@@ -3,3 +3,68 @@
 	margin: 0px;
 	padding: 0px
 }
+
+#ERROR{
+	position: fixed;
+	z-index: 100;
+	left: 30%;
+	top: 45%;
+	width: 40%;
+	height: 10%;
+	display: table;
+	text-align: center;
+	box-shadow: 1px 1px 12px #000;
+	opacity: 0;
+	-webkit-animation: fadeout 1s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadeout 1s; /* Firefox < 16 */
+        -ms-animation: fadeout 1s; /* Internet Explorer */
+         -o-animation: fadeout 1s; /* Opera < 12.1 */
+            animation: fadeout 1s;
+
+    -webkit-transition: opacity;
+       -moz-transition: opacity;
+        -ms-transition: opacity;
+         -o-transition: opacity;
+            transition: opacity;
+    -webkit-transition-delay: 5s;
+       -moz-transition-delay: 5s;
+        -ms-transition-delay: 5s;
+         -o-transition-delay: 5s;
+            transition-delay: 5s;
+}
+
+@keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+#ERROR > span{
+	display: table-cell;
+	vertical-align: middle;
+	font-weight: bold;
+	font-size: 2em;
+}
