@@ -15,14 +15,14 @@
             - @short_url.each do |item|
                 %tr
                     %td
-                        %a{:href => "/#{item.urlshort}"} #{item.urlshort}
+                        %a{:href => "/visitar/#{item.urlshort}"} #{item.urlshort}
                     %td
                         #{item.n_visits}
                     %td
                         - if item.email != nil
-                            %a{:href => "/stadistic/#{item.email}"} #{item.email}
+                            %a{:href => "/all/stadistic/#{item.email}"} #{item.email}
                         - else
-                            %a{:href => "/stadistic/public"} Pública
+                            %a{:href => "/all/stadistic/public"} Pública
                         %td
                             %a{:href=>"/info/#{item.urlshort}", :title => "Estadísticas individuales"}
                                 %i.fa.fa-bar-chart
