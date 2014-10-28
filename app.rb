@@ -92,7 +92,7 @@ end
 #Dependientes de info
 
 #Get's para estadísticas y filtrado de usuarios en estadisticas
-['/info/stadistic', '/info/stadistic/:user'].each do |path|
+['/all/stadistic', '/all/stadistic/:user'].each do |path|
   get path do
     if params[:user] == 'public'
       @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
@@ -158,11 +158,7 @@ post '/' do
   else
     logger.info "Error! <#{params[:url]}> is not a valid URL"
   end
-  if !session[:uid]
-    redirect '/'
-  else
-    redirect 'session'
-  end
+  redirect '/'
 end
 
 #Funciones para obtener IP, Geolocalizacion y contruir el mapa con la API
